@@ -25,7 +25,8 @@
  *   LANG=HTML
  *   <div id="some_id">...</div>
  *
- * If the specified node does not exist, @{JX.$()} will throw ##JX.$.NotFound##.
+ * If the specified node does not exist, @{JX.$()} will throw an exception.
+ *
  * For other ways to select nodes from the document, see @{JX.DOM.scry()} and
  * @{JX.DOM.find()}.
  *
@@ -54,20 +55,11 @@ JX.$ = function(id) {
           '"name" attribute.');
       }
     }
-    throw JX.$.NotFound;
+    throw new Error("JX.$('" + id + "') call matched no nodes.");
   }
 
   return node;
 };
-
-JX.$.NotFound = {};
-if (__DEV__) {
-  //  If we're in dev, upgrade this object into an Error so that it will
-  //  print something useful if it escapes the stack after being thrown.
-  JX.$.NotFound = new Error(
-    'JX.$() or JX.DOM.find() call matched no nodes.');
-}
-
 
 /**
  * Upcast a string into an HTML object so it is treated as markup instead of
@@ -239,7 +231,7 @@ JX.$H = function(str) {
  * @{JX.HTML} for discussion.
  *
  * You can create new nodes with a Javelin sigil (and, optionally, metadata) by
- * providing "sigil" and "metadata" keys in the attribute dictionary.
+ * providing "sigil" and "meta" keys in the attribute dictionary.
  *
  * @param string                  Tag name, like 'a' or 'div'.
  * @param dict|string|@{JX.HTML}? Property dictionary, or content if you don't
@@ -800,8 +792,7 @@ JX.install('DOM', {
 
     /**
      * Select a node uniquely identified by a root, tagname and sigil. This
-     * is similar to JX.DOM.scry() but expects exactly one result. It will
-     * throw JX.$.NotFound if it matches no results.
+     * is similar to JX.DOM.scry() but expects exactly one result.
      *
      * @task query
      *
@@ -831,7 +822,8 @@ JX.install('DOM', {
       }
 
       if (!result.length) {
-        throw JX.$.NotFound;
+        throw new Error('JX.DOM.find(<node>, "' +
+          tagname + '", "' + sigil + '"): '+ 'matched no nodes.');
       }
 
       return result[0];
