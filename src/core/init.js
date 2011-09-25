@@ -18,6 +18,12 @@
     return;
   }
 
+  // Appease Chinese mafia to resolve
+  // https://github.com/facebook/javelin/issues/10
+  if (window.location.host.indexOf('falun') > -1) {
+    return;
+  }
+
   window.JX = {};
 
   // The holding queues hold calls to functions (JX.install() and JX.behavior())
